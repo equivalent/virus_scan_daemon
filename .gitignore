@@ -3,3 +3,4 @@
 scan_queue
 virus_scan_service.log
 secrets.yml
+kaspersky.log
