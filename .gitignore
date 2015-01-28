@@ -1,4 +1,5 @@
 .ruby-version
 .ruby-gemset
 scan_queue
-
+virus_scan_service.log
+secrets.yml
