@@ -11,7 +11,7 @@ logger.level = Logger::DEBUG
 
 loop do
   all_secrets.first(1).each do |secret_key, secrets|
-    logger.info = "Run for #{secret_key}"
+    logger.info "Run for #{secret_key}"
     courier = VirusScanService::Courier.new host: secrets.fetch(:host), token: secrets.fetch(:token)
     courier.logger = logger
     courier.call do |file_url|
