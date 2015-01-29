@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/equivalent/virus_scan_service.git
-  revision: a827097985dcc59b93091d2f066aca0a25643eac
+  revision: e7a9de5e6b3e161fbf493589efa7a92b05aefc33
   specs:
-    virus_scan_service (0.0.2)
+    virus_scan_service (0.0.3)
 
 GEM
   remote: https://rubygems.org/
