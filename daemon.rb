@@ -14,8 +14,18 @@ courier = VirusScanService::Courier.new host: secrets.fetch(:host), token: secre
 courier.logger = logger
 courier.call do |file_url|
   kaspersky = VirusScanService::KasperskyRunner.new(file_url)
-  kaspersky.scan_folder = Pathname.new('.').join('scan_queue')
   kaspersky.scan_log_path = Pathname.new('.').join('kaspersky.log')
+
+  kaspersky.scan_folder = Pathname
+    .new('.')
+    .join('scan_queue')
+    .tap { |path| FileUtils.mkdir_p(path) }
+
+  kaspersky.archive_folder = Pathname
+    .new('.')
+    .join('scan_logs_archive')
+    .tap { |path| FileUtils.mkdir_p(path) }
+
   kaspersky.call
-  kaspersky.result
+  kaspersky.result # return result to PUT request (E.g: Clean)
 end
