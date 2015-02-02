@@ -28,6 +28,9 @@ loop do
         .join('scan_logs_archive')
         .tap { |path| FileUtils.mkdir_p(path) }
 
+
+      kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::WindowsExecutor.new
+
       kaspersky.call
       kaspersky.result # return result to PUT request (E.g: Clean)
     end
