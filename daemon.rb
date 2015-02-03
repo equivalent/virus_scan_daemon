@@ -30,6 +30,7 @@ loop do
           .tap { |path| FileUtils.mkdir_p(path) }
 
         kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::WindowsExecutor.new
+        #kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::LinuxExecutor.new
 
         kaspersky.call
         kaspersky.result # return result to PUT request (E.g: Clean)
