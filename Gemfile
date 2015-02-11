@@ -1,3 +1,3 @@
 source 'https://rubygems.org'
 
-gem 'virus_scan_service', github: 'equivalent/virus_scan_service'
+gem 'virus_scan_service', '~> 0.0.8'
