@@ -44,10 +44,9 @@ from `cmd`
 bundle exec ruby daemon.rb
 ```
 
-
 #### lunch on Windows startup
 
-1. create a `lunch_virus_scaner.bat` (e.g. in: ~/apps) and add this into
+1. create a `lunch_virus_scaner.bat` (e.g. in: `c:\Users\apps`) and add this into
    it:
 
    ```
