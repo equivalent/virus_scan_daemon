@@ -44,9 +44,24 @@ from `cmd`
 bundle exec ruby daemon.rb
 ```
 
+
+#### lunch on Windows startup
+
+1. create a `lunch_virus_scaner.bat` (e.g. in: ~/apps) and add this into
+   it:
+
+   ```
+   echo off
+   cd %USERPROFILE%\apps\virus_scan_daemon
+   bundle exec ruby daemon.rb
+   ```
+
+2. add shortuct of it to
+   `c:\Users\<loginname>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`
+
 ## Log
 
 From `gitbash` you can `tail -f virus_scan_service.log`. By default the
 log shows only Error messages. If you want to trace info or debugging
 messages just create empty file `info` or `debug` in directory where
-you cloned this repo.
+you cloned this repo (see the `daemon.rb` for more details).
