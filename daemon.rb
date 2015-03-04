@@ -2,8 +2,11 @@ require 'virus_scan_service'
 require 'logger'
 require 'yaml'
 require 'pathname'
+require 'pry'
 
 all_secrets = YAML.load(File.read('secrets.yml'))
+
+TEST_RUN = true
 
 loop do
   logger = Logger.new('virus_scan_service.log')
@@ -17,24 +20,29 @@ loop do
       courier = VirusScanService::Courier.new host: secrets.fetch(:host), token: secrets.fetch(:token)
       courier.logger = logger
       courier.call do |file_url|
-        kaspersky = VirusScanService::KasperskyRunner.new(file_url)
-        kaspersky.scan_log_path = Pathname.new('.').join('kaspersky.log')
+        puts file_url
+        if TEST_RUN
+          'Clean'
+        else
+          kaspersky = VirusScanService::KasperskyRunner.new(file_url)
+          kaspersky.scan_log_path = Pathname.new('.').join('kaspersky.log')
 
-        kaspersky.scan_folder = Pathname
-          .new('.')
-          .join('scan_queue')
-          .tap { |path| FileUtils.mkdir_p(path) }
+          kaspersky.scan_folder = Pathname
+            .new('.')
+            .join('scan_queue')
+            .tap { |path| FileUtils.mkdir_p(path) }
 
-        kaspersky.archive_folder = Pathname
-          .new('.')
-          .join('scan_logs_archive')
-          .tap { |path| FileUtils.mkdir_p(path) }
+          kaspersky.archive_folder = Pathname
+            .new('.')
+            .join('scan_logs_archive')
+            .tap { |path| FileUtils.mkdir_p(path) }
 
-        kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::WindowsExecutor.new
-        # kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::LinuxExecutor.new
+          kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::WindowsExecutor.new
+          # kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::LinuxExecutor.new
 
-        kaspersky.call
-        kaspersky.result # return result to PUT request (E.g: Clean)
+          kaspersky.call
+          kaspersky.result # return result to PUT request (E.g: Clean)
+        end
       end
     end
     sleep 2 # sleep between servers
