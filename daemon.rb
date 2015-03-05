@@ -1,53 +1,46 @@
-require 'virus_scan_service'
 require 'logger'
-require 'yaml'
-require 'pathname'
+errors_count = 0
+counter = 0
 
-all_secrets = YAML.load(File.read('secrets.yml'))
-
-FORCE_CLEAN = false # if true skip virus scan and mark as clan
+logger = Logger.new('daemon.log')
+logger.level = Logger::ERROR
+logger.level = Logger::INFO  if File.exist?('info')
+logger.level = Logger::DEBUG if File.exist?('debug')
 
 loop do
-  logger = Logger.new('virus_scan_service.log')
-  logger.level = Logger::ERROR
-  logger.level = Logger::INFO  if File.exist?('info')
-  logger.level = Logger::DEBUG if File.exist?('debug')
+  counter += 1
 
   begin
-    all_secrets.each do |secret_key, secrets|
-      logger.info "Run for #{secret_key}"
-      courier = VirusScanService::Courier.new(host: secrets.fetch(:host), token: secrets.fetch(:token))
-      courier.num_of_scans = 20
-      courier.logger = logger
-      courier.call do |file_url|
-        if FORCE_CLEAN
-          courier.logger.info "FORCE_CLEAN run"
-          'Clean'
-        else
-          kaspersky = VirusScanService::KasperskyRunner.new(file_url)
-          kaspersky.scan_log_path = Pathname.new('.').join('kaspersky.log')
-
-          kaspersky.scan_folder = Pathname
-            .new('.')
-            .join('scan_queue')
-            .tap { |path| FileUtils.mkdir_p(path) }
-
-          kaspersky.archive_folder = Pathname
-            .new('.')
-            .join('scan_logs_archive')
-            .tap { |path| FileUtils.mkdir_p(path) }
-
-          kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::WindowsExecutor.new
-          # kaspersky.antivirus_exec = VirusScanService::KasperskyRunner::LinuxExecutor.new
-
-          kaspersky.call
-          kaspersky.result # return result to PUT request (E.g: Clean)
-        end
+    if counter % 10 == 0
+      logger.info "running git pull"
+      if system('git pull origin master')
+        logger.info("git pull complete")
+      else
+        logger.error("git pull NOT-SUCCESSFUL")
       end
+
+      logger.info "running bundle update"
+      if system('bundle update')
+        logger.info("update complete")
+      else
+        logger.error("update NOT-SUCCESSFUL")
+      end
+
+      counter = 0
     end
+
+    if system('bundle exec ruby script.rb')
+      logger.info("exec ruby script success")
+    else
+      logger.error("exec ruby script NOT-SUCCESSFUL")
+    end
+
+    errors_count = 0
   rescue => e
-    logger.error e.to_s
-    sleep 2
+    errors_count += 1
+    logger.error e
+    sleep 5
+    sleep 60 if errors_count > 5
+    sleep 600 if errors_count > 50
   end
-  sleep 1 # sleep on new secret cycle, not required
 end

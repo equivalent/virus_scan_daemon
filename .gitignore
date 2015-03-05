@@ -1,8 +1,7 @@
 .ruby-version
 .ruby-gemset
 scan_queue
-virus_scan_service.log
 secrets.yml
-kaspersky.log
+*.log
 info
 debug
