@@ -45,10 +45,9 @@ loop do
         end
       end
     end
-    sleep 2 # sleep between servers
   rescue => e
     logger.info e.to_s
-    sleep 60
+    sleep 2
   end
-  sleep 8 # sleep on new secret cycle
+  sleep 1 # sleep on new secret cycle, not required
 end
