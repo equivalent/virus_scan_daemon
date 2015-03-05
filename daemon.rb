@@ -6,7 +6,7 @@ require 'pry'
 
 all_secrets = YAML.load(File.read('secrets.yml'))
 
-TEST_RUN = true
+FORCE_CLEAN = false # if true skip virus scan and mark as clan
 
 loop do
   logger = Logger.new('virus_scan_service.log')
@@ -17,11 +17,12 @@ loop do
   begin
     all_secrets.each do |secret_key, secrets|
       logger.info "Run for #{secret_key}"
-      courier = VirusScanService::Courier.new host: secrets.fetch(:host), token: secrets.fetch(:token)
+      courier = VirusScanService::Courier.new(host: secrets.fetch(:host), token: secrets.fetch(:token))
+      courier.num_of_scans = 20
       courier.logger = logger
       courier.call do |file_url|
-        puts file_url
-        if TEST_RUN
+        if FORCE_CLEAN
+          courier.logger.info "FORCE_CLEAN run"
           'Clean'
         else
           kaspersky = VirusScanService::KasperskyRunner.new(file_url)
@@ -46,7 +47,7 @@ loop do
       end
     end
   rescue => e
-    logger.info e.to_s
+    logger.error e.to_s
     sleep 2
   end
   sleep 1 # sleep on new secret cycle, not required
