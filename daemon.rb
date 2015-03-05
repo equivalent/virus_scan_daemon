@@ -11,7 +11,7 @@ loop do
   counter += 1
 
   begin
-    if counter % 10 == 0
+    if counter % 50 == 0
       logger.info "running git pull"
       if system('git pull origin master')
         logger.info("git pull complete")
@@ -40,7 +40,7 @@ loop do
     errors_count += 1
     logger.error e
     sleep 5
-    sleep 60 if errors_count > 5
-    sleep 600 if errors_count > 50
+    sleep 60 if errors_count > 10
+    sleep 300 if errors_count > 50
   end
 end
