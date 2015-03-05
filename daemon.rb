@@ -2,7 +2,6 @@ require 'virus_scan_service'
 require 'logger'
 require 'yaml'
 require 'pathname'
-require 'pry'
 
 all_secrets = YAML.load(File.read('secrets.yml'))
 
