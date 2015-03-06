@@ -1,6 +1,7 @@
 .ruby-version
 .ruby-gemset
 scan_queue
+scan_logs_archive
 secrets.yml
 *.log
 info
