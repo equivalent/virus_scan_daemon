@@ -13,7 +13,7 @@ loop do
   begin
     if counter % 50 == 0
       logger.info "running git pull"
-      if system('git pull origin master')
+      if system('git pull')
         logger.info("git pull complete")
       else
         logger.error("git pull NOT-SUCCESSFUL")
